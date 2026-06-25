@@ -1,0 +1,9 @@
+{
+  "name": "ngo-project-root",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "npm install --prefix server && npm install --prefix client",
+    "build": "npm run build --prefix client && rm -rf public && mv client/dist public",
+    "dev": "npm run dev --prefix server & npm run dev --prefix client"
+  }
+}
