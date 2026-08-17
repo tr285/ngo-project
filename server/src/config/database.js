@@ -7,14 +7,16 @@ const connectDB = async () => {
   try {
     let uri = env.mongodbUri;
     
-    // Always use temporary DB as requested
-    try {
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      mongoServer = await MongoMemoryServer.create();
-      uri = mongoServer.getUri();
-      console.log(`Using temporary MongoDB at ${uri}`);
-    } catch (e) {
-      console.warn('mongodb-memory-server not installed or failed to start, using default URI');
+    // Only use temporary DB if not in production (e.g. for local dev/testing)
+    if (env.nodeEnv !== 'production' && process.env.USE_MEMORY_DB === 'true') {
+      try {
+        const { MongoMemoryServer } = require('mongodb-memory-server');
+        mongoServer = await MongoMemoryServer.create();
+        uri = mongoServer.getUri();
+        console.log(`Using temporary MongoDB at ${uri}`);
+      } catch (e) {
+        console.warn('mongodb-memory-server not installed or failed to start, using default URI');
+      }
     }
 
     const conn = await mongoose.connect(uri, {
